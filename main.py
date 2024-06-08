@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import Tk, Entry
 from pytube import YouTube
 import winsound
 import re
@@ -42,9 +43,25 @@ def select_save_path():
 
 def play_sound():
     winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS)
+    
+def _onKeyRelease(event):
+    ctrl  = (event.state & 0x4) != 0
+    if event.keycode==88 and  ctrl and event.keysym.lower() != "x": 
+        event.widget.event_generate("<<Cut>>")
 
+    if event.keycode==86 and  ctrl and event.keysym.lower() != "v": 
+        event.widget.event_generate("<<Paste>>")
+
+    if event.keycode==67 and  ctrl and event.keysym.lower() != "c":
+        event.widget.event_generate("<<Copy>>")
+        
+    if event.keycode==65 and  ctrl and event.keysym.lower() != "a":
+        event.widget.event_generate("<<SelectAll>>")
+ 
 root = tk.Tk()
 root.title("YouTube Video Downloader")
+
+root.bind_all("<Key>", _onKeyRelease, "+")
 
 # Set the size of the window
 root.geometry("400x130")
@@ -61,6 +78,7 @@ audio_only_checkbox.grid(row=2, columnspan=1, pady=5)
 # Entry field for YouTube URL with placeholder text
 entry = tk.Entry(root, width=40)
 entry.grid(row=0, column=1, pady=5)
+
 
 # Entry field for displaying selected save path
 save_path_var = tk.StringVar()
